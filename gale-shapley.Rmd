@@ -16,15 +16,19 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 ## Generate data
 ```{r}
-N <- 100
+N <- 400
 sigma <- 2
 omega <- 2
+mu_0 <- 1
 source('gen-data.R')
 ```
 
 ```{r}
 source('men.R')
-cbind(mean_u_star_M,mean_v_star_M)
+cbind(mean_u_star_M,mean_v_star_M, frac_single)
 ```
-
+```{r}
+source('women.R')
+cbind(mean_u_star_W,mean_v_star_W, frac_single)
+```
 
