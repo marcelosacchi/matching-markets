@@ -36,6 +36,9 @@ rejected_past <- rejected
 rejected_by <- t(rejected)
 rownames(rejected_by) <- paste("Man",1:N)
 colnames(rejected_by) <- paste("Woman",1:N)
+proposed_by <- rejected
+rownames(proposed_by) <- paste("Woman",1:N)
+colnames(proposed_by) <- paste("Man",1:N)
 proposals <- max.col(cbind(u,u_bach)) # propose to best available option as long
                                       # as better than being single
 pseudo_u <- u
@@ -66,6 +69,7 @@ while (rounds <= max_rounds) {
                                                     #propose to a woman twice
   proposals <- max.col(cbind(pseudo_u,u_bach)) # propose to best available option as long
                                                # as better than being single
+  proposed_by
   for (n in 1:N){
     if (sum(n==proposals)>0) { #if woman n has proposal(s)
       if (max((n==proposals)*v[paste("Woman",n),])>v_bach[n]) {
@@ -74,6 +78,7 @@ while (rounds <= max_rounds) {
         rejected[n,] <- rejected[n,] + (n==proposals)*v[paste("Woman",n),]<max((n==proposals)*v[paste("Woman",n),]) & (n==proposals) # adds new rejections to previous ones
       }
       else rejected[n,] <- rejected[n,] + (n==proposals)}} # if no proposal tops being single, reject all
+  
   rejected_by <- t(rejected)
   new_rejections <- sum(rejected)-sum(rejected_past)
   rounds <- rounds + 1
