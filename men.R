@@ -50,7 +50,6 @@ while (new_rejections > 0 & rounds <= max_rounds) {
         rejected[n,] <- rejected[n,] + ((proposed_by[n,]==TRUE)*v[paste("Woman",n),]<max((proposed_by[n,]==TRUE)*v[paste("Woman",n),]) & (proposed_by[n,]==TRUE)) # adds new rejections to previous ones
       }
       else rejected[n,] <- rejected[n,] + (n==proposals)}} # if no proposal tops being single, reject all
-  
   rejected_by <- t(rejected)
   new_rejections <- sum(rejected)-sum(rejected_past)
   rounds <- rounds + 1
