@@ -1,0 +1,79 @@
+---
+title: "gale-shapley"
+author: "marcelosacchi"
+date: "11/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Generate data
+```{r}
+N <- 3
+sigma <- .5
+delta <- .5
+source('gen-data.R')
+```
+
+## Initialize variables for the men proposing algorithm
+
+Matrix to keep track of rejections
+Vector to keep track of current proposals in each round
+pseudo U to ignore rejected utilities
+```{r}
+rejected <- matrix(as.logical(0*1:N^2), nrow=N,ncol=N) #row is woman who rejects
+                                                          # man(column)
+rownames(rejected) <- paste("Woman",1:N)
+colnames(rejected) <- paste("Man",1:N)
+rejected_past <- rejected
+rejected_by <- t(rejected)
+rownames(rejected_by) <- paste("Man",1:N)
+colnames(rejected_by) <- paste("Woman",1:N)
+proposals <- max.col(u) ERRADO
+pseudo_u <- u
+rounds <- 1
+```
+
+## First round
+Women take their proposals, if any, and tentatively accept the best one if it's 
+better than staying single
+```{r}
+for (n in 1:N){
+  if (sum(n==proposals)>0) { #if woman n has proposal(s)
+    if (max((n==proposals)*v[paste("Woman",n),])>v_bach[n]) {
+      #if best proposal better than staying single, don't reject it (but reject proposals
+      # below the best one
+      rejected[n,] <- rejected[n,] + (n==proposals)*v[paste("Woman",n),]<max((n==proposals)*v[paste("Woman",n),]) & (n==proposals) # adds new rejections to previous ones
+    }
+    else rejected[n,] <- rejected[n,] + (n==proposals)}} # if no proposal tops being single, reject all
+rejected_by <- t(rejected)
+new_rejections = sum(rejected)-sum(rejected_past)
+```
+Other rounds (keep doing it until no new rejections)
+```{r}
+while (new_rejections>0 & rounds<20000) {
+  rejected_past <- rejected
+  pseudo_u <- u*(1-rejected_by)+(-10^6)*rejected_by #to force men never to 
+                                                    #propose to a woman twice
+  proposals <- max.col(pseudo_u)*(max(pseudo_u)>=u_bach) ERRADO
+  for (n in 1:N){
+    if (sum(n==proposals)>0) { #if woman n has proposal(s)
+      if (max((n==proposals)*v[paste("Woman",n),])>v_bach[n]) {
+        #if best proposal better than staying single, don't reject it (but reject proposals
+        # below the best one
+        rejected[n,] <- rejected[n,] + (n==proposals)*v[paste("Woman",n),]<max((n==proposals)*v[paste("Woman",n),]) & (n==proposals) # adds new rejections to previous ones
+      }
+      else rejected[n,] <- rejected[n,] + (n==proposals)}} # if no proposal tops being single, reject all
+  rejected_by <- t(rejected)
+  new_rejections <- sum(rejected)-sum(rejected_past)
+  rounds <- rounds + 1
+}
+```
+
