@@ -15,9 +15,9 @@ library(matrixStats)
 #sigma # assumed predefined
 #omega # assumed predefined
 
-J <- round(sqrt(N))
+J <- round((N)^(1/4))
 
-mu <- rnorm(N, mean = 0, sd = 1)
+mu <- rnorm(N, mean = mu_0, sd = 1)
 g <- matrix(rnorm(N^2, mean = 0, sd = 1), nrow=N,ncol=N)
 u <- t(matrix(replicate(N,mu),nrow=N))+sigma*g # men's utility over women
 g_bach <- rowMaxs(matrix(rnorm(N*J, mean = 0, sd = 1), nrow=N,ncol=J), na.rm = TRUE)
