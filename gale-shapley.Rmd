@@ -16,9 +16,9 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 ## Generate data
 ```{r}
-N <- 3
+N <- 6
 sigma <- .5
-delta <- .5
+omega <- .5
 source('gen-data.R')
 ```
 
@@ -36,7 +36,8 @@ rejected_past <- rejected
 rejected_by <- t(rejected)
 rownames(rejected_by) <- paste("Man",1:N)
 colnames(rejected_by) <- paste("Woman",1:N)
-proposals <- max.col(u) ERRADO
+proposals <- max.col(cbind(u,u_bach)) # propose to best available option as long
+                                      # as better than being single
 pseudo_u <- u
 rounds <- 1
 ```
@@ -58,11 +59,13 @@ new_rejections = sum(rejected)-sum(rejected_past)
 ```
 Other rounds (keep doing it until no new rejections)
 ```{r}
-while (new_rejections>0 & rounds<20000) {
+max_rounds = 100*N
+while (rounds <= max_rounds) {
   rejected_past <- rejected
-  pseudo_u <- u*(1-rejected_by)+(-10^6)*rejected_by #to force men never to 
+  pseudo_u <- u*(1-rejected_by)+(-100)*rejected_by #to force men never to 
                                                     #propose to a woman twice
-  proposals <- max.col(pseudo_u)*(max(pseudo_u)>=u_bach) ERRADO
+  proposals <- max.col(cbind(pseudo_u,u_bach)) # propose to best available option as long
+                                               # as better than being single
   for (n in 1:N){
     if (sum(n==proposals)>0) { #if woman n has proposal(s)
       if (max((n==proposals)*v[paste("Woman",n),])>v_bach[n]) {
@@ -74,6 +77,7 @@ while (new_rejections>0 & rounds<20000) {
   rejected_by <- t(rejected)
   new_rejections <- sum(rejected)-sum(rejected_past)
   rounds <- rounds + 1
+  cbind(rounds, new_rejections)
 }
 ```
 
